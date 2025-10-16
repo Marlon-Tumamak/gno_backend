@@ -3,14 +3,13 @@ Production settings for ong_backend project.
 """
 
 import os
-from decouple import config
 from .settings import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-flm4h*4s8z1+edev=%&c7)v$upwb056e%bjpcnl%o$+x^7ms^6')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-flm4h*4s8z1+edev=%&c7)v$upwb056e%bjpcnl%o$+x^7ms^6')
 
 ALLOWED_HOSTS = ['*']  # Configure this properly for your domain
 
@@ -38,7 +37,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    # Add your frontend URL here when you deploy it
+    os.environ.get('FRONTEND_URL', 'http://localhost:3000'),
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -47,7 +46,7 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    # Add your frontend URL here when you deploy it
+    os.environ.get('FRONTEND_URL', 'http://localhost:3000'),
 ]
 
 # Security settings

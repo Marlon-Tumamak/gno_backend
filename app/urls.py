@@ -27,6 +27,9 @@ from .views import (
     DriversSummaryView,
 )
 from .revenue_views import RevenueStreamsView
+from .accounts_views import AccountsSummaryView
+from .accounts_detail_views import AccountsDetailView
+from .trips_views import TripsView
 
 urlpatterns = [
     # TruckType URLs
@@ -76,4 +79,13 @@ urlpatterns = [
     
     # Revenue Streams URL
     path('revenue/streams/', RevenueStreamsView.as_view(), name='revenue-streams'),
+    
+    # Accounts Summary URL
+    path('accounts/summary/', AccountsSummaryView.as_view(), name='accounts-summary'),
+    
+    # Accounts Detail URL
+    path('accounts/detail/', AccountsDetailView.as_view(), name='accounts-detail'),
+    
+    # Trips URL
+    path('trips/', TripsView.as_view(), name='trips'),
 ]

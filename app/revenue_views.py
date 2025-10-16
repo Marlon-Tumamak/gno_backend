@@ -94,3 +94,6 @@ class RevenueStreamsView(APIView):
                 {'error': f'Failed to fetch revenue streams data: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+
