@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Sum
 from collections import defaultdict
+import re
 from .models import (
     RepairAndMaintenanceAccount, 
     InsuranceAccount, 
@@ -11,6 +12,59 @@ from .models import (
     AllowanceAccount, 
     IncomeAccount
 )
+
+
+def parse_remarks(remarks):
+    """
+    Parse remarks to extract driver, route, front_load, and back_load
+    Format: "LRO: 140Liters Fuel and Oil NGS-4359 Francis Ariglado:PAG-ILIGAN: Strike/Cement:"
+    """
+    if not remarks:
+        return None, None, None, None
+    
+    # Known drivers list
+    drivers = [
+        'Edgardo Agapay', 'Romel Bantilan', 'Reynaldo Rizalda', 'Francis Ariglado',
+        'Roque Oling', 'Pablo Hamo', 'Albert Saavedra', 'Jimmy Oclarit', 'Nicanor',
+        'Arnel Duhilag', 'Benjamin Aloso', 'Roger', 'Joseph Bahan', 'Doming'
+    ]
+    
+    # Known routes list
+    routes = [
+        'PAG-CDO', 'PAG-ILIGAN', 'Strike Holcim', 'PAG-ILIGAN STRIKE', 'PAG-CDO (CARGILL)',
+        'PAG-CDO STRIKE', 'PAG-BUK', 'PAG-DIPLAHAN', 'PAG-MARANDING', 'PAG-COTABATO',
+        'PAG-ZMBGA', 'Pag-COTABATO', 'Pag-AURORA', 'PAG-DIPOLOG', 'PAG-MOLAVE',
+        'PAGADIAN', 'PAG-DIMATALING', 'PAG-DINAS', 'PAG-LABANGAN', 'PAG-MIDSALIP',
+        'PAGADIAN', 'PAG-OZAMIS', 'PAG-OSMENIA', 'PAG-DUMINGAG', 'PAG-KUMALARANG',
+        'PAG-MAHAYAG', 'PAG-TAMBULIG', 'PAG-SURIGAO', 'PAG-BUYOGAN', 'PAG-SAN PABLO',
+        'PAGADIAN-OPEX', 'CDO-OPEX', 'PAG-BAYOG', 'PAG-LAKEWOOD', 'PAG-BUUG'
+    ]
+    
+    driver = None
+    route = None
+    front_load = None
+    back_load = None
+    
+    # Find driver
+    for known_driver in drivers:
+        if known_driver in remarks:
+            driver = known_driver
+            break
+    
+    # Find route
+    for known_route in routes:
+        if known_route in remarks:
+            route = known_route
+            break
+    
+    # Find front_load/back_load pattern (format: "value/value")
+    load_pattern = r'([^:]+)/([^:]+):'
+    load_match = re.search(load_pattern, remarks)
+    if load_match:
+        front_load = load_match.group(1).strip()
+        back_load = load_match.group(2).strip()
+    
+    return driver, route, front_load, back_load
 
 
 class TripsView(APIView):
@@ -60,7 +114,8 @@ class TripsView(APIView):
                 if len(accounts) == 1:
                     # Single entry - check if front_load has value
                     account = accounts[0]
-                    front_load_value = str(account.front_load).strip()
+                    front_load_value = str(account.front_load).strip().lower()
+                    back_load_value = str(account.back_load).strip().lower()
                     
                     trips[trip_key]['account_number'] = account.account_number
                     trips[trip_key]['plate_number'] = plate_num
@@ -71,17 +126,32 @@ class TripsView(APIView):
                     trips[trip_key]['front_load'] = account.front_load
                     trips[trip_key]['remarks'] = account.remarks
                     
-                    if front_load_value and front_load_value != '' and front_load_value.lower() != 'nan':
-                        # Both front_load and back_load have values - divide by 2
+                    # Check if front_load has a meaningful value (not empty, 'n', 'nan', etc.)
+                    if (front_load_value and front_load_value != '' and 
+                        front_load_value not in ['n', 'nan', 'none', '0'] and
+                        back_load_value and back_load_value != '' and 
+                        back_load_value not in ['nan', 'none', '0']):
+                        # Both front_load and back_load have meaningful values - divide by 2
                         half_amount = float(account.final_total) / 2
                         trips[trip_key]['front_load_amount'] += half_amount
                         trips[trip_key]['back_load_amount'] += half_amount
                         trips[trip_key]['front_load_reference_number'] = ref_num
                         trips[trip_key]['back_load_reference_number'] = ref_num
-                    else:
-                        # No front_load value - all goes to back_load
+                    elif (back_load_value and back_load_value != '' and 
+                          back_load_value not in ['nan', 'none', '0']):
+                        # Only back_load has value - all goes to back_load, front_load = 0
+                        trips[trip_key]['front_load_amount'] = 0  # Explicitly set to 0
                         trips[trip_key]['back_load_amount'] += float(account.final_total)
                         trips[trip_key]['back_load_reference_number'] = ref_num
+                    elif (front_load_value and front_load_value != '' and 
+                          front_load_value not in ['n', 'nan', 'none', '0']):
+                        # Only front_load has value - all goes to front_load, back_load = 0
+                        trips[trip_key]['front_load_amount'] += float(account.final_total)
+                        trips[trip_key]['back_load_amount'] = 0  # Explicitly set to 0
+                        trips[trip_key]['front_load_reference_number'] = ref_num
+                    else:
+                        # Neither has meaningful value - skip this entry
+                        continue
                 else:
                     # Multiple entries - first is front_load, rest are back_load
                     for i, account in enumerate(accounts):

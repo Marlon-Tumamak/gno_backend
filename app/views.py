@@ -5,7 +5,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q, Sum, Count
 from collections import defaultdict
-from .models import RepairAndMaintenanceAccount, InsuranceAccount, FuelAccount, TaxAccount, AllowanceAccount, IncomeAccount, TruckType, AccountType, PlateNumber
+from .models import RepairAndMaintenanceAccount, InsuranceAccount, FuelAccount, TaxAccount, AllowanceAccount, IncomeAccount, TruckingAccount, SalaryAccount, TruckType, AccountType, PlateNumber
+from .trucking_upload_view import TruckingAccountUploadView
+from .salary_upload_view import SalaryAccountUploadView
 from .serializers import (
     RepairAndMaintenanceAccountSerializer,
     InsuranceAccountSerializer,
@@ -13,6 +15,8 @@ from .serializers import (
     TaxAccountSerializer,
     AllowanceAccountSerializer,
     IncomeAccountSerializer,
+    TruckingAccountSerializer,
+    SalaryAccountSerializer,
     TruckTypeSerializer,
     AccountTypeSerializer,
     PlateNumberSerializer
@@ -410,7 +414,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# IncomeAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class IncomeAccountListView(ListCreateAPIView):
     """
     GET: List all income accounts
@@ -741,7 +765,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# TaxAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class TaxAccountListView(ListCreateAPIView):
     """
     GET: List all tax accounts
@@ -1068,7 +1112,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# IncomeAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class IncomeAccountListView(ListCreateAPIView):
     """
     GET: List all income accounts
@@ -1399,7 +1463,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# AllowanceAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class AllowanceAccountListView(ListCreateAPIView):
     """
     GET: List all allowance accounts
@@ -1724,7 +1808,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# IncomeAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class IncomeAccountListView(ListCreateAPIView):
     """
     GET: List all income accounts
@@ -2055,7 +2159,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# InsuranceAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class InsuranceAccountListView(ListCreateAPIView):
     """
     GET: List all insurance accounts
@@ -2380,7 +2504,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# IncomeAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class IncomeAccountListView(ListCreateAPIView):
     """
     GET: List all income accounts
@@ -2711,7 +2855,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# TaxAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class TaxAccountListView(ListCreateAPIView):
     """
     GET: List all tax accounts
@@ -3038,7 +3202,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# IncomeAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class IncomeAccountListView(ListCreateAPIView):
     """
     GET: List all income accounts
@@ -3369,7 +3553,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# AllowanceAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class AllowanceAccountListView(ListCreateAPIView):
     """
     GET: List all allowance accounts
@@ -3694,7 +3898,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# IncomeAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class IncomeAccountListView(ListCreateAPIView):
     """
     GET: List all income accounts
@@ -4025,7 +4249,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# FuelAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class FuelAccountListView(ListCreateAPIView):
     """
     GET: List all fuel accounts
@@ -4356,7 +4600,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# IncomeAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class IncomeAccountListView(ListCreateAPIView):
     """
     GET: List all income accounts
@@ -4687,7 +4951,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# TaxAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class TaxAccountListView(ListCreateAPIView):
     """
     GET: List all tax accounts
@@ -5014,7 +5298,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# IncomeAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class IncomeAccountListView(ListCreateAPIView):
     """
     GET: List all income accounts
@@ -5345,7 +5649,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# AllowanceAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class AllowanceAccountListView(ListCreateAPIView):
     """
     GET: List all allowance accounts
@@ -5670,7 +5994,27 @@ class DriversSummaryView(APIView):
             )
 
 
-# IncomeAccount Views
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
 class IncomeAccountListView(ListCreateAPIView):
     """
     GET: List all income accounts
@@ -5999,3 +6343,26 @@ class DriversSummaryView(APIView):
                 {'error': f'Failed to fetch drivers data: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+# TruckingAccount Views
+class TruckingAccountListView(ListCreateAPIView):
+    """
+    GET: List all trucking accounts
+    POST: Create a new trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+
+class TruckingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a specific trucking account
+    PUT: Update a specific trucking account
+    PATCH: Partially update a specific trucking account
+    DELETE: Delete a specific trucking account
+    """
+    queryset = TruckingAccount.objects.all()
+    serializer_class = TruckingAccountSerializer
+
+

@@ -131,3 +131,48 @@ class IncomeAccount(models.Model):
 
     def __str__(self):
         return self.account_number
+
+class TruckingAccount(models.Model):
+    account_number = models.CharField(max_length=255)
+    account_type = models.CharField(max_length=255)
+    truck_type = models.CharField(max_length=255)
+    plate_number = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField()
+    debit = models.DecimalField(max_digits=15, decimal_places=2)
+    credit = models.DecimalField(max_digits=15, decimal_places=2)
+    final_total = models.DecimalField(max_digits=15, decimal_places=2)
+    remarks = models.TextField()
+    reference_number = models.CharField(max_length=255, null=True, blank=True)
+    date = models.DateField()
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    driver = models.CharField(max_length=255, null=True, blank=True)
+    route = models.CharField(max_length=255, null=True, blank=True)
+    front_load = models.CharField(max_length=255, null=True, blank=True)
+    back_load = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.account_number} - {self.description}"
+
+
+class SalaryAccount(models.Model):
+    account_number = models.CharField(max_length=255)
+    account_type = models.CharField(max_length=255)
+    truck_type = models.CharField(max_length=255)
+    plate_number = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField()
+    debit = models.DecimalField(max_digits=15, decimal_places=2)
+    credit = models.DecimalField(max_digits=15, decimal_places=2)
+    final_total = models.DecimalField(max_digits=15, decimal_places=2)
+    remarks = models.TextField()
+    reference_number = models.CharField(max_length=255, null=True, blank=True)
+    date = models.DateField()
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    driver = models.CharField(max_length=255, null=True, blank=True)
+    route = models.CharField(max_length=255, null=True, blank=True)
+    front_load = models.CharField(max_length=255, null=True, blank=True)
+    back_load = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.account_number} - {self.description}"

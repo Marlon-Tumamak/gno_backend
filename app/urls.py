@@ -24,12 +24,23 @@ from .views import (
     IncomeAccountListView,
     IncomeAccountDetailView,
     IncomeAccountUploadView,
+    TruckingAccountListView,
+    TruckingAccountDetailView,
+    TruckingAccountUploadView,
     DriversSummaryView,
 )
 from .revenue_views import RevenueStreamsView
 from .accounts_views import AccountsSummaryView
 from .accounts_detail_views import AccountsDetailView
 from .trips_views import TripsView
+from .trucking_summary_views import (
+    TruckingDriversSummaryView,
+    TruckingRevenueStreamsView,
+    TruckingAccountsSummaryView,
+    TruckingTripsSummaryView
+)
+from .salary_views import SalaryAccountListView, SalaryAccountDetailView
+from .salary_upload_view import SalaryAccountUploadView
 
 urlpatterns = [
     # TruckType URLs
@@ -74,6 +85,16 @@ urlpatterns = [
     path('income/<int:pk>/', IncomeAccountDetailView.as_view(), name='income-detail'),
     path('income/upload/', IncomeAccountUploadView.as_view(), name='income-upload'),
     
+    # Trucking Account URLs
+    path('trucking/', TruckingAccountListView.as_view(), name='trucking-list'),
+    path('trucking/<int:pk>/', TruckingAccountDetailView.as_view(), name='trucking-detail'),
+    path('trucking/upload/', TruckingAccountUploadView.as_view(), name='trucking-upload'),
+    
+    # Salary Account URLs
+    path('salary/', SalaryAccountListView.as_view(), name='salary-list'),
+    path('salary/<int:pk>/', SalaryAccountDetailView.as_view(), name='salary-detail'),
+    path('salary/upload/', SalaryAccountUploadView.as_view(), name='salary-upload'),
+    
     # Drivers Summary URL
     path('drivers/summary/', DriversSummaryView.as_view(), name='drivers-summary'),
     
@@ -88,4 +109,10 @@ urlpatterns = [
     
     # Trips URL
     path('trips/', TripsView.as_view(), name='trips'),
+    
+    # Trucking Summary URLs (from trucking data)
+    path('trucking/drivers/summary/', TruckingDriversSummaryView.as_view(), name='trucking-drivers-summary'),
+    path('trucking/revenue/streams/', TruckingRevenueStreamsView.as_view(), name='trucking-revenue-streams'),
+    path('trucking/accounts/summary/', TruckingAccountsSummaryView.as_view(), name='trucking-accounts-summary'),
+    path('trucking/trips/summary/', TruckingTripsSummaryView.as_view(), name='trucking-trips-summary'),
 ]
