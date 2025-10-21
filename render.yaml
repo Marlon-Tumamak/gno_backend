@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: ong-trucking-backend
+    runtime: python
+    env: python
+    plan: free
+    region: singapore
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: gunicorn ong_backend.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+      - key: FRONTEND_URL
+        sync: false
+
