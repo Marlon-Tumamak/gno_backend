@@ -26,6 +26,10 @@ SECRET_KEY = 'django-insecure-flm4h*4s8z1+edev=%&c7)v$upwb056e%bjpcnl%o$+x^7ms^6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
+ALLOWED_HOSTS = [
+    '*'  # Allow all for development
+]
+
 # ALLOWED_HOSTS = [
 #     'gno-backend.onrender.com',
 #     'localhost',
