@@ -24,18 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-flm4h*4s8z1+edev=%&c7)v$upwb056e%bjpcnl%o$+x^7ms^6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = True
 
-ALLOWED_HOSTS = [
-    '*'  # Allow all for development
-]
-
-# ALLOWED_HOSTS = [
-#     'gno-backend.onrender.com',
-#     'localhost',
-#     '127.0.0.1',
-#     '*'  # Allow all for development
-# ]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -157,42 +148,14 @@ REST_FRAMEWORK = {
 }
 
 # CORS Settings
-# In production, only allow specific origins
 CORS_ALLOWED_ORIGINS = [
     "https://gno-frontend.onrender.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
 
-# # Allow all origins in development only
-# if DEBUG:
-#     CORS_ALLOW_ALL_ORIGINS = True
-# else:
-#     CORS_ALLOW_ALL_ORIGINS = False
-
 CORS_ALLOW_CREDENTIALS = True
-
-# Additional CORS settings for file uploads and headers
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
-
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
+CORS_ALLOW_ALL_ORIGINS = DEBUG  # Allow all origins in development
 
 # For file uploads
 CSRF_TRUSTED_ORIGINS = [
