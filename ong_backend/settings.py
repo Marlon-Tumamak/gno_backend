@@ -26,12 +26,12 @@ SECRET_KEY = 'django-insecure-flm4h*4s8z1+edev=%&c7)v$upwb056e%bjpcnl%o$+x^7ms^6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = [
-    'gno-backend.onrender.com',
-    'localhost',
-    '127.0.0.1',
-    '*'  # Allow all for development
-]
+# ALLOWED_HOSTS = [
+#     'gno-backend.onrender.com',
+#     'localhost',
+#     '127.0.0.1',
+#     '*'  # Allow all for development
+# ]
 
 
 # Application definition
@@ -160,11 +160,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
-# Allow all origins in development only
-if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
-else:
-    CORS_ALLOW_ALL_ORIGINS = False
+# # Allow all origins in development only
+# if DEBUG:
+#     CORS_ALLOW_ALL_ORIGINS = True
+# else:
+#     CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOW_CREDENTIALS = True
 
