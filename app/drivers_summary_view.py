@@ -93,6 +93,10 @@ class DriversSummaryView(APIView):
                     front_load = account.front_load
                     back_load = account.back_load
                     
+                    # Skip records where both front_load and back_load are empty/None
+                    if not front_load and not back_load:
+                        continue
+                    
                     # Determine amount allocation based on Strike logic
                     front_amount = Decimal('0.00')
                     back_amount = Decimal('0.00')
