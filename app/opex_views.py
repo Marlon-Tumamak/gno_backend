@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Sum
+from collections import defaultdict
 from .models import TruckingAccount
 
 
@@ -15,47 +16,62 @@ class OPEXView(APIView):
             # Get OPEX amounts by account types
             opex_data = {}
             
-            # Insurance Expense - handle negative values
-            insurance_amount = TruckingAccount.objects.filter(account_type='Insurance Expense').aggregate(
-                total=Sum('final_total')
-            )['total'] or 0
-            opex_data['Insurance Expense'] = abs(float(insurance_amount))
+            # Helper function to get account breakdown for a given account type
+            def get_account_breakdown(account_type):
+                records = TruckingAccount.objects.filter(account_type=account_type)
+                account_totals = defaultdict(float)
+                
+                for record in records:
+                    account_num = record.account_number if record.account_number else 'No Account Number'
+                    account_totals[account_num] += float(record.final_total)
+                
+                return {
+                    'total_amount': sum(account_totals.values()),
+                    'account_details': [
+                        {
+                            'account_number': account_num,
+                            'amount': round(amount, 2)
+                        }
+                        for account_num, amount in sorted(account_totals.items(), key=lambda x: x[1], reverse=True)
+                    ]
+                }
             
-            # Repairs and Maintenance Expense - handle negative values
-            repairs_amount = TruckingAccount.objects.filter(account_type='Repairs and Maintenance Expense').aggregate(
-                total=Sum('final_total')
-            )['total'] or 0
-            opex_data['Repairs and Maintenance Expense'] = abs(float(repairs_amount))
+            # Get breakdown for each OPEX account type
+            insurance_breakdown = get_account_breakdown('Insurance Expense')
+            repairs_breakdown = get_account_breakdown('Repairs and Maintenance Expense')
+            taxes_permits_breakdown = get_account_breakdown('Taxes, Permits and Licenses Expense')
+            salaries_breakdown = get_account_breakdown('Salaries and Wages')
+            tax_breakdown = get_account_breakdown('Tax Expense')
             
-            # Taxes, Permits and Licenses Expense - handle negative values
-            taxes_permits_amount = TruckingAccount.objects.filter(account_type='Taxes, Permits and Licenses Expense').aggregate(
-                total=Sum('final_total')
-            )['total'] or 0
-            opex_data['Taxes, Permits and Licenses Expense'] = abs(float(taxes_permits_amount))
+            opex_data = {
+                'Insurance Expense': insurance_breakdown['total_amount'],
+                'Repairs and Maintenance Expense': repairs_breakdown['total_amount'],
+                'Taxes, Permits and Licenses Expense': taxes_permits_breakdown['total_amount'],
+                'Salaries and Wages': salaries_breakdown['total_amount'],
+                'Tax Expense': tax_breakdown['total_amount']
+            }
             
-            # Salaries and Wages - handle negative values
-            salaries_amount = TruckingAccount.objects.filter(account_type='Salaries and Wages').aggregate(
-                total=Sum('final_total')
-            )['total'] or 0
-            opex_data['Salaries and Wages'] = abs(float(salaries_amount))
-            
-            # Tax Expense - handle negative values
-            tax_amount = TruckingAccount.objects.filter(account_type='Tax Expense').aggregate(
-                total=Sum('final_total')
-            )['total'] or 0
-            opex_data['Tax Expense'] = abs(float(tax_amount))
+            # Store account details for response
+            account_details = {
+                'Insurance Expense': insurance_breakdown['account_details'],
+                'Repairs and Maintenance Expense': repairs_breakdown['account_details'],
+                'Taxes, Permits and Licenses Expense': taxes_permits_breakdown['account_details'],
+                'Salaries and Wages': salaries_breakdown['account_details'],
+                'Tax Expense': tax_breakdown['account_details']
+            }
             
             # Calculate total OPEX
             total_opex = sum(opex_data.values())
             
-            # Calculate percentages
+            # Calculate percentages and include account details
             opex_breakdown = []
             for account_type, amount in opex_data.items():
                 percentage = (amount / total_opex * 100) if total_opex > 0 else 0
                 opex_breakdown.append({
                     'account_type': account_type,
                     'amount': amount,
-                    'percentage': round(percentage, 2)
+                    'percentage': round(percentage, 2),
+                    'account_details': account_details[account_type]
                 })
             
             # Sort by amount descending

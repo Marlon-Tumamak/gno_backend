@@ -80,29 +80,24 @@ class RevenueStreamsView(APIView):
                 total=Sum('final_total')
             )['total'] or 0
             
-            # Get OPEX amounts by account types - handle negative values
-            insurance_amount = TruckingAccount.objects.filter(account_type='Insurance Expense').aggregate(
-                total=Sum('final_total')
-            )['total'] or 0
+            # Get OPEX amounts by account types - sum actual values (negative values will be subtracted)
+            insurance_records = TruckingAccount.objects.filter(account_type='Insurance Expense')
+            insurance_amount = sum(float(record.final_total) for record in insurance_records)
             
-            repairs_amount = TruckingAccount.objects.filter(account_type='Repairs and Maintenance Expense').aggregate(
-                total=Sum('final_total')
-            )['total'] or 0
+            repairs_records = TruckingAccount.objects.filter(account_type='Repairs and Maintenance Expense')
+            repairs_amount = sum(float(record.final_total) for record in repairs_records)
             
-            taxes_permits_amount = TruckingAccount.objects.filter(account_type='Taxes, Permits and Licenses Expense').aggregate(
-                total=Sum('final_total')
-            )['total'] or 0
+            taxes_permits_records = TruckingAccount.objects.filter(account_type='Taxes, Permits and Licenses Expense')
+            taxes_permits_amount = sum(float(record.final_total) for record in taxes_permits_records)
             
-            salaries_amount = TruckingAccount.objects.filter(account_type='Salaries and Wages').aggregate(
-                total=Sum('final_total')
-            )['total'] or 0
+            salaries_records = TruckingAccount.objects.filter(account_type='Salaries and Wages')
+            salaries_amount = sum(float(record.final_total) for record in salaries_records)
             
-            tax_amount = TruckingAccount.objects.filter(account_type='Tax Expense').aggregate(
-                total=Sum('final_total')
-            )['total'] or 0
+            tax_records = TruckingAccount.objects.filter(account_type='Tax Expense')
+            tax_amount = sum(float(record.final_total) for record in tax_records)
             
-            # Calculate total OPEX (excluding Driver's Allowance and Fuel) - use absolute values
-            total_opex = abs(float(insurance_amount)) + abs(float(repairs_amount)) + abs(float(taxes_permits_amount)) + abs(float(salaries_amount)) + abs(float(tax_amount))
+            # Calculate total OPEX (excluding Driver's Allowance and Fuel)
+            total_opex = insurance_amount + repairs_amount + taxes_permits_amount + salaries_amount + tax_amount
             
             return Response({
                 'revenue_streams': {
