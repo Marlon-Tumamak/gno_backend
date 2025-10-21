@@ -84,7 +84,7 @@ urlpatterns = [
     path('trucking/upload/', TruckingAccountUploadView.as_view(), name='trucking-upload'),
     path('trucking/preview/', TruckingAccountPreviewView.as_view(), name='trucking-preview'),
     
-    # Drivers Summary URL
+    
     path('drivers/summary/', DriversSummaryView.as_view(), name='drivers-summary'),
     
     # Revenue Streams URL
