@@ -32,7 +32,7 @@ from .drivers_summary_view import DriversSummaryView
 from .trucking_upload_view import TruckingAccountPreviewView
 from .revenue_views import RevenueStreamsView
 from .opex_views import OPEXView
-from .accounts_views import AccountsSummaryView
+from .accounts_views import AccountsSummaryView, TruckingAccountSummaryView
 from .accounts_detail_views import AccountsDetailView
 from .trips_views import TripsView
 
@@ -96,6 +96,9 @@ urlpatterns = [
     
     # Accounts Summary URL
     path('accounts/summary/', AccountsSummaryView.as_view(), name='accounts-summary'),
+    
+    # Trucking Account Summary URL
+    path('trucking/accounts-summary/', TruckingAccountSummaryView.as_view(), name='trucking-accounts-summary'),
     
     # Accounts Detail URL
     path('accounts/detail/', AccountsDetailView.as_view(), name='accounts-detail'),
