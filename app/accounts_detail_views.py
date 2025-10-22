@@ -1,207 +1,86 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import Sum, Count
-from .models import (
-    RepairAndMaintenanceAccount, 
-    InsuranceAccount, 
-    FuelAccount, 
-    TaxAccount, 
-    AllowanceAccount, 
-    IncomeAccount
-)
-
+from .models import TruckingAccount
+from django.db.models import Q
 
 class AccountsDetailView(APIView):
     """
-    GET: Get detailed entries for all account types
+    GET: Get detailed account entries from TruckingAccount model
     """
-    
     def get(self, request):
         try:
-            # Get all entries for each account type
-            accounts_detail = {}
-            
-            # Repair and Maintenance Accounts
-            repair_maintenance_entries = RepairAndMaintenanceAccount.objects.select_related(
-                'truck_type', 'account_type', 'plate_number'
-            ).all()
-            
-            accounts_detail['repair_maintenance'] = {
-                'name': 'Repair & Maintenance',
-                'entries': []
+            # Define account type mappings
+            account_mappings = {
+                'repair_maintenance': {
+                    'account_type': 'Repairs and Maintenance Expense',
+                    'name': 'Repair & Maintenance'
+                },
+                'insurance': {
+                    'account_type': 'Insurance Expense',
+                    'name': 'Insurance'
+                },
+                'fuel': {
+                    'account_type': 'Fuel and Oil',
+                    'name': 'Fuel & Oil'
+                },
+                'tax': {
+                    'account_type': 'Tax Expense',
+                    'name': 'Tax Account'
+                },
+                'allowance': {
+                    'account_type': 'Driver\'s Allowance',
+                    'name': 'Allowance Account'
+                },
+                'income': {
+                    'account_type': 'Hauling Income',
+                    'name': 'Income Account'
+                }
             }
             
-            for entry in repair_maintenance_entries:
-                accounts_detail['repair_maintenance']['entries'].append({
-                    'id': entry.id,
-                    'account_number': entry.account_number,
-                    'truck_type': entry.truck_type.name,
-                    'account_type': entry.account_type.name,
-                    'plate_number': entry.plate_number.number,
-                    'debit': float(entry.debit),
-                    'credit': float(entry.credit),
-                    'final_total': float(entry.final_total),
-                    'reference_number': entry.reference_number,
-                    'date': entry.date.strftime('%Y-%m-%d'),
-                    'description': entry.description,
-                    'remarks': entry.remarks
-                })
+            accounts_data = {}
             
-            # Insurance Accounts
-            insurance_entries = InsuranceAccount.objects.select_related(
-                'truck_type', 'account_type', 'plate_number'
-            ).all()
-            
-            accounts_detail['insurance'] = {
-                'name': 'Insurance',
-                'entries': []
-            }
-            
-            for entry in insurance_entries:
-                accounts_detail['insurance']['entries'].append({
-                    'id': entry.id,
-                    'account_number': entry.account_number,
-                    'truck_type': entry.truck_type.name,
-                    'account_type': entry.account_type.name,
-                    'plate_number': entry.plate_number.number,
-                    'debit': float(entry.debit),
-                    'credit': float(entry.credit),
-                    'final_total': float(entry.final_total),
-                    'reference_number': entry.reference_number,
-                    'date': entry.date.strftime('%Y-%m-%d'),
-                    'description': entry.description,
-                    'remarks': entry.remarks
-                })
-            
-            # Fuel Accounts
-            fuel_entries = FuelAccount.objects.select_related(
-                'truck_type', 'account_type', 'plate_number'
-            ).all()
-            
-            accounts_detail['fuel'] = {
-                'name': 'Fuel & Oil',
-                'entries': []
-            }
-            
-            for entry in fuel_entries:
-                accounts_detail['fuel']['entries'].append({
-                    'id': entry.id,
-                    'account_number': entry.account_number,
-                    'truck_type': entry.truck_type.name,
-                    'account_type': entry.account_type.name,
-                    'plate_number': entry.plate_number.number,
-                    'debit': float(entry.debit),
-                    'credit': float(entry.credit),
-                    'final_total': float(entry.final_total),
-                    'reference_number': entry.reference_number,
-                    'date': entry.date.strftime('%Y-%m-%d'),
-                    'description': entry.description,
-                    'remarks': entry.remarks,
-                    'driver': entry.driver,
-                    'route': entry.route,
-                    'liters': float(entry.liters) if entry.liters else 0,
-                    'price': float(entry.price) if entry.price else 0,
-                    'front_load': entry.front_load,
-                    'back_load': entry.back_load
-                })
-            
-            # Tax Accounts
-            tax_entries = TaxAccount.objects.select_related(
-                'truck_type', 'account_type', 'plate_number'
-            ).all()
-            
-            accounts_detail['tax'] = {
-                'name': 'Tax Account',
-                'entries': []
-            }
-            
-            for entry in tax_entries:
-                accounts_detail['tax']['entries'].append({
-                    'id': entry.id,
-                    'account_number': entry.account_number,
-                    'truck_type': entry.truck_type.name,
-                    'account_type': entry.account_type.name,
-                    'plate_number': entry.plate_number.number,
-                    'debit': float(entry.debit),
-                    'credit': float(entry.credit),
-                    'final_total': float(entry.final_total),
-                    'reference_number': entry.reference_number,
-                    'date': entry.date.strftime('%Y-%m-%d'),
-                    'description': entry.description,
-                    'remarks': entry.remarks,
-                    'price': float(entry.price) if entry.price else 0,
-                    'quantity': float(entry.quantity) if entry.quantity else 0
-                })
-            
-            # Allowance Accounts
-            allowance_entries = AllowanceAccount.objects.select_related(
-                'truck_type', 'account_type', 'plate_number'
-            ).all()
-            
-            accounts_detail['allowance'] = {
-                'name': 'Allowance Account',
-                'entries': []
-            }
-            
-            for entry in allowance_entries:
-                accounts_detail['allowance']['entries'].append({
-                    'id': entry.id,
-                    'account_number': entry.account_number,
-                    'truck_type': entry.truck_type.name,
-                    'account_type': entry.account_type.name,
-                    'plate_number': entry.plate_number.number,
-                    'debit': float(entry.debit),
-                    'credit': float(entry.credit),
-                    'final_total': float(entry.final_total),
-                    'reference_number': entry.reference_number,
-                    'date': entry.date.strftime('%Y-%m-%d'),
-                    'description': entry.description,
-                    'remarks': entry.remarks
-                })
-            
-            # Income Accounts
-            income_entries = IncomeAccount.objects.select_related(
-                'truck_type', 'account_type', 'plate_number'
-            ).all()
-            
-            accounts_detail['income'] = {
-                'name': 'Income Account',
-                'entries': []
-            }
-            
-            for entry in income_entries:
-                accounts_detail['income']['entries'].append({
-                    'id': entry.id,
-                    'account_number': entry.account_number,
-                    'truck_type': entry.truck_type.name,
-                    'account_type': entry.account_type.name,
-                    'plate_number': entry.plate_number.number,
-                    'debit': float(entry.debit),
-                    'credit': float(entry.credit),
-                    'final_total': float(entry.final_total),
-                    'reference_number': entry.reference_number,
-                    'date': entry.date.strftime('%Y-%m-%d'),
-                    'description': entry.description,
-                    'remarks': entry.remarks,
-                    'driver': entry.driver,
-                    'route': entry.route,
-                    'quantity': float(entry.quantity),
-                    'price': float(entry.price),
-                    'front_load': entry.front_load,
-                    'back_load': entry.back_load
-                })
+            for key, mapping in account_mappings.items():
+                # Get all records for this account type
+                records = TruckingAccount.objects.filter(account_type=mapping['account_type'])
+                
+                # Convert to the format expected by frontend
+                entries = []
+                for record in records:
+                    entry = {
+                        'id': record.id,
+                        'account_number': record.account_number or '',
+                        'truck_type': record.truck_type or '',
+                        'account_type': record.account_type,
+                        'plate_number': record.plate_number or '',
+                        'debit': float(record.debit or 0),
+                        'credit': float(record.credit or 0),
+                        'final_total': float(record.final_total or 0),
+                        'reference_number': record.reference_number or '',
+                        'date': record.date.strftime('%Y-%m-%d') if record.date else '',
+                        'description': record.description or '',
+                        'remarks': record.remarks or '',
+                        'driver': record.driver or '',
+                        'route': record.route or '',
+                        'liters': float(record.quantity or 0) if record.quantity else None,
+                        'price': float(record.price or 0) if record.price else None,
+                        'front_load': record.front_load or '',
+                        'back_load': record.back_load or '',
+                        'quantity': float(record.quantity or 0) if record.quantity else None
+                    }
+                    entries.append(entry)
+                
+                accounts_data[key] = {
+                    'name': mapping['name'],
+                    'entries': entries
+                }
             
             return Response({
-                'accounts': accounts_detail
+                'accounts': accounts_data
             }, status=status.HTTP_200_OK)
             
         except Exception as e:
             return Response(
-                {'error': f'Failed to fetch accounts detail: {str(e)}'},
+                {'error': f'Failed to fetch accounts detail data: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
-
-
-
