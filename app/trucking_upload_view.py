@@ -58,6 +58,19 @@ def is_valid_load(load_value):
     # Accept multi-word loads that have at least one valid-looking word
     return any(len(word) >= 3 and word.isalpha() for word in words)
 
+def standardize_plate_number(plate_number):
+    """Standardize plate number format by removing spaces, hyphens, and converting to uppercase"""
+    if not plate_number:
+        return None
+    
+    # Convert to string and clean
+    plate_clean = str(plate_number).strip()
+    
+    # Remove all spaces, hyphens, and convert to uppercase
+    standardized = plate_clean.replace(' ', '').replace('-', '').upper()
+    
+    return standardized if standardized else None
+
 def clean_load_value(load_value):
     """Enhanced cleaning for load values"""
     if not load_value:
@@ -760,7 +773,7 @@ class TruckingAccountUploadView(APIView):
                         account_number=row.get('account_number', ''),
                         account_type=row.get('account_type', ''),
                         truck_type=row.get('truck_type', ''),
-                        plate_number=row.get('plate_number', '') if row.get('plate_number') != '' else None,
+                        plate_number=standardize_plate_number(row.get('plate_number', '')),
                         description=row.get('description', ''),
                         debit=row.get('debit', 0),
                         credit=row.get('credit', 0),
