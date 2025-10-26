@@ -12,7 +12,7 @@ INVALID_LOADS = {
     'of', 'with', 'by', 'from', 'up', 'down', 'out', 'off', 'over', 'under',
     'lro', 'liters', 'fuel', 'oil', 'ug', 'ni', 'mag', 'para', 'additional',
     'transport', 'goods', 'items', 'load', 'delivery', 'pickup', 'mao',
-    'transfer', 'pundo', 'tangke', 'bugas', 'humay'
+    'transfer', 'pundo', 'tangke', 'bugas', 'humay', 'buug'
 }
 
 def is_valid_load(load_value):
@@ -282,17 +282,21 @@ class TruckingAccountPreviewView(APIView):
 
             
             def extract_loads_from_remarks(remarks):
+                """
+                Extract front and back loads ONLY if they appear in a slash pattern, e.g. 'Strike/Cement'.
+                Ignores all other forms such as 'deliver ug cemento' or 'backload humay'.
+                """
                 if pd.isna(remarks) or remarks is None:
                     return None, None
                 remarks_str = str(remarks)
-                
+
                 front_load = None
                 back_load = None
-                
-                # Pattern 1: "Strike/Cement:", "RH Holcim/Cement:" - most specific pattern
-                # This matches: colon, space, load1/load2, colon
-                load_pattern_specific = r':\s*([A-Za-z\s]+)/([A-Za-z\s]+):'
-                match = re.search(load_pattern_specific, remarks_str)
+
+                # Pattern 1: "load1/load2:" - with trailing colon (most common)
+                # Examples: "Strike/Cement:", "RH Holcim/Cement:", "Strike/cemento:"
+                load_pattern_with_colon = r':\s*([A-Za-z\s]+)/([A-Za-z\s]+):'
+                match = re.search(load_pattern_with_colon, remarks_str)
                 if match:
                     potential_front = match.group(1).strip()
                     potential_back = match.group(2).strip()
@@ -300,8 +304,9 @@ class TruckingAccountPreviewView(APIView):
                     # Validate both loads
                     if is_valid_load(potential_front) and is_valid_load(potential_back):
                         return clean_load_value(potential_front), clean_load_value(potential_back)
-                
-                # Pattern 2: "Strike/Cement" at end of string (no trailing colon)
+
+                # Pattern 2: "load1/load2" at end of string (no trailing colon)
+                # Examples: "Strike/Cement", "Cement/Backload CDO"
                 load_pattern_end = r':\s*([A-Za-z\s]+)/([A-Za-z\s]+)\s*$'
                 match = re.search(load_pattern_end, remarks_str)
                 if match:
@@ -310,45 +315,25 @@ class TruckingAccountPreviewView(APIView):
                     
                     if is_valid_load(potential_front) and is_valid_load(potential_back):
                         return clean_load_value(potential_front), clean_load_value(potential_back)
-                
-                # # Pattern 3: "deliver cemento backload humay" - delivery pattern
-                # deliver_backload = r'deliver\s+([a-zA-Z]+)\s+backload\s+([a-zA-Z]+)'
-                # match = re.search(deliver_backload, remarks_str, re.IGNORECASE)
-                # if match:
-                #     potential_front = match.group(1).strip()
-                #     potential_back = match.group(2).strip()
-                    
-                #     if is_valid_load(potential_front) and is_valid_load(potential_back):
-                #         return clean_load_value(potential_front), clean_load_value(potential_back)
-                
-                # Pattern 4: Single load - "deliver cemento" or "deliver ug cemento"
-                single_deliver = r'deliver\s+(?:ug\s+)?([a-zA-Z]+)'
-                match = re.search(single_deliver, remarks_str, re.IGNORECASE)
-                if match:
-                    potential_load = match.group(1).strip()
-                    if is_valid_load(potential_load):
-                        return clean_load_value(potential_load), None
-                
-                # # Pattern 5: "kuha humay" or "kuha ug humay" - pickup pattern
-                # kuha_pattern = r'kuha\s+(?:ug\s+)?([a-zA-Z]+)'
-                # match = re.search(kuha_pattern, remarks_str, re.IGNORECASE)
-                # if match:
-                #     potential_back = match.group(1).strip()
-                #     if is_valid_load(potential_back):
-                #         return front_load, clean_load_value(potential_back)
-                
-                # Pattern 6: Look for load patterns after route
-                # E.g., "PAG-ILIGAN: Strike/Cement:"
-                after_route = r'(?:PAG-[A-Z]+|DIMATALING|DUMINGAG):\s*([A-Za-z\s]+)/([A-Za-z\s]+)'
-                match = re.search(after_route, remarks_str, re.IGNORECASE)
+
+                # Pattern 3: "load1/load2" anywhere in the string with word boundaries
+                # Examples: "PAG-ILIGAN: Strike/Cement: additional notes"
+                load_pattern_general = r'\b([A-Za-z\s]{3,})/([A-Za-z\s]{3,})\b'
+                match = re.search(load_pattern_general, remarks_str)
                 if match:
                     potential_front = match.group(1).strip()
                     potential_back = match.group(2).strip()
-                    
-                    if is_valid_load(potential_front) and is_valid_load(potential_back):
+
+                    # Make sure neither part looks like a route or driver name
+                    route_indicators = ['PAG-', 'CDO', 'ILIGAN', 'OPEX', 'PAGADIAN']
+                    is_route = any(indicator in potential_front.upper() or indicator in potential_back.upper()
+                                for indicator in route_indicators)
+
+                    if not is_route and is_valid_load(potential_front) and is_valid_load(potential_back):
                         return clean_load_value(potential_front), clean_load_value(potential_back)
-                
-                return front_load, back_load
+
+                # No slash pattern found - return None for both
+                return None, None
 
             # Convert driver, route, front_load, back_load columns to object type to avoid dtype warnings
             if 'driver' in df.columns:
