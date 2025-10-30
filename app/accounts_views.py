@@ -58,6 +58,14 @@ class AccountsSummaryView(APIView):
                 'Hauling Income', 'Income Account', 'emerald'
             )
             
+            accounts_summary['salaries_wages'] = get_account_summary(
+                'Salaries and Wages', 'Salaries and Wages', 'yellow'
+            )
+            
+            accounts_summary['taxes_permits_licenses'] = get_account_summary(
+                'Taxes, Permits and Licenses Expense', 'Taxes, Permits and Licenses', 'cyan'
+            )
+            
             # Calculate overall totals
             total_debit = sum(account['total_debit'] for account in accounts_summary.values())
             total_credit = sum(account['total_credit'] for account in accounts_summary.values())
@@ -132,6 +140,14 @@ class TruckingAccountSummaryView(APIView):
             
             accounts_summary['income'] = get_account_summary(
                 'Hauling Income', 'Income Account', 'emerald'
+            )
+            
+            accounts_summary['salaries_wages'] = get_account_summary(
+                'Salaries and Wages', 'Salaries and Wages', 'yellow'
+            )
+            
+            accounts_summary['taxes_permits_licenses'] = get_account_summary(
+                'Taxes, Permits and Licenses Expense', 'Taxes, Permits and Licenses', 'cyan'
             )
             
             # Calculate overall totals

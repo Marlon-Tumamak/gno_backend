@@ -35,6 +35,14 @@ class AccountsDetailView(APIView):
                 'income': {
                     'account_type': 'Hauling Income',
                     'name': 'Income Account'
+                },
+                'salaries_wages': {
+                    'account_type': 'Salaries and Wages',
+                    'name': 'Salaries and Wages'
+                },
+                'taxes_permits_licenses': {
+                    'account_type': 'Taxes, Permits and Licenses Expense',
+                    'name': 'Taxes, Permits and Licenses'
                 }
             }
             
