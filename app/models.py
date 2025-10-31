@@ -132,6 +132,16 @@ class IncomeAccount(models.Model):
     def __str__(self):
         return self.account_number
 
+class Driver(models.Model):
+    name = models.CharField(max_length=255)
+    def __str__(self):
+        return self.name
+
+class Route(models.Model):
+    name = models.CharField(max_length=255)
+    def __str__(self):
+        return self.name
+
 class TruckingAccount(models.Model):
     account_number = models.CharField(max_length=255)
     account_type = models.CharField(max_length=255)
@@ -146,8 +156,8 @@ class TruckingAccount(models.Model):
     date = models.DateField()
     quantity = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    driver = models.CharField(max_length=255, null=True, blank=True)
-    route = models.CharField(max_length=255, null=True, blank=True)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, null=True, blank=True)
+    route = models.ForeignKey(Route, on_delete=models.CASCADE, null=True, blank=True)
     front_load = models.CharField(max_length=255, null=True, blank=True)
     back_load = models.CharField(max_length=255, null=True, blank=True)
 

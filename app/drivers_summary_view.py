@@ -72,7 +72,7 @@ class DriversSummaryView(APIView):
                 if not account.driver:
                     continue
                 
-                driver = account.driver
+                driver_name = account.driver.name
                 amount = abs(float(account.credit)) if float(account.credit) != 0 else abs(float(account.debit))
                 
                 # Track entry for Strike logic
@@ -80,7 +80,7 @@ class DriversSummaryView(APIView):
                 entry_tracker[key].append({
                     'account': account,
                     'amount': amount,
-                    'driver': driver
+                    'driver_name': driver_name
                 })
             
             # Process entries with Strike logic
@@ -88,7 +88,7 @@ class DriversSummaryView(APIView):
                 for idx, entry in enumerate(entries):
                     account = entry['account']
                     amount = entry['amount']
-                    driver = entry['driver']
+                    driver_name = entry['driver_name']
                     
                     front_load = account.front_load
                     back_load = account.back_load
@@ -126,20 +126,20 @@ class DriversSummaryView(APIView):
                                 back_amount = Decimal(str(amount))
                     
                     # Update driver summary
-                    drivers_summary[driver]['driver'] = driver
-                    drivers_summary[driver]['total_front_load'] += front_amount
-                    drivers_summary[driver]['total_back_load'] += back_amount
-                    drivers_summary[driver]['total_amount'] += Decimal(str(amount))
-                    drivers_summary[driver]['total_trips'] += 1
+                    drivers_summary[driver_name]['driver'] = driver_name
+                    drivers_summary[driver_name]['total_front_load'] += front_amount
+                    drivers_summary[driver_name]['total_back_load'] += back_amount
+                    drivers_summary[driver_name]['total_amount'] += Decimal(str(amount))
+                    drivers_summary[driver_name]['total_trips'] += 1
                     
                     if account.route:
-                        drivers_summary[driver]['routes'].add(account.route)
+                        drivers_summary[driver_name]['routes'].add(account.route.name)
                     if account.plate_number:
-                        drivers_summary[driver]['trucks'].add(account.plate_number)
+                        drivers_summary[driver_name]['trucks'].add(account.plate_number)
             
             # Convert to list format
             result = []
-            for driver, data in drivers_summary.items():
+            for driver_name, data in drivers_summary.items():
                 result.append({
                     'driver': data['driver'],
                     'total_trips': data['total_trips'],

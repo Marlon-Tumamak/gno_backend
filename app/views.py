@@ -5,13 +5,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q, Sum, Count
 from collections import defaultdict
-from .models import RepairAndMaintenanceAccount, InsuranceAccount, FuelAccount, TaxAccount, AllowanceAccount, IncomeAccount, TruckingAccount, SalaryAccount, TruckType, AccountType, PlateNumber
+from .models import Driver, RepairAndMaintenanceAccount, InsuranceAccount, FuelAccount, Route, TaxAccount, AllowanceAccount, IncomeAccount, TruckingAccount, SalaryAccount, TruckType, AccountType, PlateNumber
 from .trucking_upload_view import TruckingAccountUploadView
 from .salary_upload_view import SalaryAccountUploadView
 from .serializers import (
+    DriverSerializer,
     RepairAndMaintenanceAccountSerializer,
     InsuranceAccountSerializer,
     FuelAccountSerializer,
+    RouteSerializer,
     TaxAccountSerializer,
     AllowanceAccountSerializer,
     IncomeAccountSerializer,
@@ -25,6 +27,21 @@ import pandas as pd
 from datetime import datetime
 from decimal import Decimal
 
+class DriverListView(ListCreateAPIView):
+    queryset = Driver.objects.all()
+    serializer_class = DriverSerializer
+
+class DriverDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Driver.objects.all()
+    serializer_class = DriverSerializer
+
+class RouteListView(ListCreateAPIView):
+    queryset = Route.objects.all()
+    serializer_class = RouteSerializer
+
+class RouteDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Route.objects.all()
+    serializer_class = RouteSerializer
 
 # TruckType Views
 class TruckTypeListView(ListCreateAPIView):

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (
-    RepairAndMaintenanceAccount, InsuranceAccount, FuelAccount, TaxAccount, 
+    Driver, RepairAndMaintenanceAccount, InsuranceAccount, FuelAccount, Route, TaxAccount, 
     AllowanceAccount, IncomeAccount, TruckingAccount, SalaryAccount, TruckType, AccountType, PlateNumber
 )
 
@@ -84,8 +84,24 @@ class IncomeAccountSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id']
 
+class DriverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Driver
+        fields = ['id', 'name']
+        read_only_fields = ['id']
+
+class RouteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Route
+        fields = ['id', 'name']
+        read_only_fields = ['id']
+
 class TruckingAccountSerializer(serializers.ModelSerializer):
     date = serializers.DateField(format='%m/%d/%Y', input_formats=['%m/%d/%Y', '%Y-%m-%d'])
+    driver = DriverSerializer(read_only=True)
+    route = RouteSerializer(read_only=True)
+    driver_id = serializers.IntegerField(source='driver.id', read_only=True)
+    route_id = serializers.IntegerField(source='route.id', read_only=True)
     
     class Meta:
         model = TruckingAccount
@@ -106,6 +122,8 @@ class TruckingAccountSerializer(serializers.ModelSerializer):
             'price',
             'driver',
             'route',
+            'driver_id',
+            'route_id',
             'front_load',
             'back_load',
         ]

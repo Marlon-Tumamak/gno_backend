@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import TruckingAccount
+from .models import TruckingAccount, Driver, Route
 import pandas as pd
 import re
 
@@ -753,6 +753,18 @@ class TruckingAccountUploadView(APIView):
                     if row.get('front_load') and row.get('front_load') != '':
                         parsing_stats['loads_extracted'] += 1
                     
+                    # Resolve Driver and Route by name (create if not exist, case-insensitive to prevent duplicates)
+                    driver_instance = None
+                    route_instance = None
+                    if row.get('driver') and str(row.get('driver')).strip() != '':
+                        driver_name_raw = str(row.get('driver')).strip()
+                        existing_driver = Driver.objects.filter(name__iexact=driver_name_raw).first()
+                        driver_instance = existing_driver or Driver.objects.create(name=driver_name_raw)
+                    if row.get('route') and str(row.get('route')).strip() != '':
+                        route_name_raw = str(row.get('route')).strip()
+                        existing_route = Route.objects.filter(name__iexact=route_name_raw).first()
+                        route_instance = existing_route or Route.objects.create(name=route_name_raw)
+
                     # Create TruckingAccount instance
                     account = TruckingAccount(
                         account_number=row.get('account_number', ''),
@@ -768,8 +780,8 @@ class TruckingAccountUploadView(APIView):
                         date=row.get('date') if not pd.isna(row.get('date')) else None,
                         quantity=row.get('quantity') if not pd.isna(row.get('quantity')) and row.get('quantity') != 0 else None,
                         price=row.get('price') if not pd.isna(row.get('price')) and row.get('price') != 0 else None,
-                        driver=row.get('driver', '') if row.get('driver') != '' else None,
-                        route=row.get('route', '') if row.get('route') != '' else None,
+                        driver=driver_instance,
+                        route=route_instance,
                         front_load=row.get('front_load', '') if row.get('front_load') != '' else None,
                         back_load=row.get('back_load', '') if row.get('back_load') != '' else None,
                     )

@@ -1,5 +1,9 @@
 from django.urls import path
 from .views import (
+    DriverDetailView,
+    DriverListView,
+    RouteDetailView,
+    RouteListView,
     TruckTypeListView,
     TruckTypeDetailView,
     AccountTypeListView,
@@ -105,4 +109,12 @@ urlpatterns = [
     
     # Trips URL
     path('trips/', TripsView.as_view(), name='trips'),
+
+    # Driver URLs
+    path('drivers/', DriverListView.as_view(), name='driver-list'),
+    path('drivers/<int:pk>/', DriverDetailView.as_view(), name='driver-detail'),
+    
+    # Route URLs
+    path('routes/', RouteListView.as_view(), name='route-list'),
+    path('routes/<int:pk>/', RouteDetailView.as_view(), name='route-detail'),
 ]
