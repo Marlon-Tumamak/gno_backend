@@ -55,6 +55,32 @@ class AccountsDetailView(APIView):
                 # Convert to the format expected by frontend
                 entries = []
                 for record in records:
+                    # Handle driver - can be ForeignKey object or None
+                    driver_data = None
+                    if record.driver:
+                        if hasattr(record.driver, 'name'):
+                            # It's a Driver model instance
+                            driver_data = {
+                                'id': record.driver.id,
+                                'name': record.driver.name
+                            }
+                        else:
+                            # It's already a string
+                            driver_data = record.driver
+                    
+                    # Handle route - can be ForeignKey object or None
+                    route_data = None
+                    if record.route:
+                        if hasattr(record.route, 'name'):
+                            # It's a Route model instance
+                            route_data = {
+                                'id': record.route.id,
+                                'name': record.route.name
+                            }
+                        else:
+                            # It's already a string
+                            route_data = record.route
+                    
                     entry = {
                         'id': record.id,
                         'account_number': record.account_number or '',
@@ -68,8 +94,8 @@ class AccountsDetailView(APIView):
                         'date': record.date.strftime('%Y-%m-%d') if record.date else '',
                         'description': record.description or '',
                         'remarks': record.remarks or '',
-                        'driver': record.driver or '',
-                        'route': record.route or '',
+                        'driver': driver_data,
+                        'route': route_data,
                         'liters': float(record.quantity or 0) if record.quantity else None,
                         'price': float(record.price or 0) if record.price else None,
                         'front_load': record.front_load or '',
